@@ -13,4 +13,8 @@ Write-Host "----- Decoded End -----"
 ## Merge multiple CSV file and Export to One
 ```
 Get-ChildItem -Recurse *.csv | Select-Object -ExpandPropertyFullName| Import-Csv | Export-Csv ..\merged.csv -NoTypeInformation -Append
+```   
+## Find String in File with newline
 ```
+Get-ChildItem -Path "<path logs>" -Recurse | select-string "getRuntime()" | %{$_.Line}
+```   
