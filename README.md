@@ -16,5 +16,5 @@ Get-ChildItem -Recurse *.csv | Select-Object -ExpandPropertyFullName| Import-Csv
 ```   
 ## Find String in File with newline
 ```
-Get-ChildItem -Path "<path logs>" -Recurse | select-string "getRuntime()" | %{$_.Line}
+Get-ChildItem -Path "<path logs>" -Recurse | select-string -Pattern "getRuntime()" 
 ```   
