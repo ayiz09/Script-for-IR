@@ -17,4 +17,14 @@ Get-ChildItem -Recurse *.csv | Select-Object -ExpandPropertyFullName| Import-Csv
 ## Find String in File with newline
 ```
 Get-ChildItem -Path "<path logs>" -Recurse | select-string -Pattern "getRuntime()" 
-```   
+```
+
+## Find files having MZ header
+```
+$filesWithMZ = Get-ChildItem -Recurse | Where-Object {
+    $fileContent = Get-Content -LiteralPath $_.FullName -Encoding Byte -ErrorAction SilentlyContinue
+    $fileContent -ne $null -and ($fileContent[0] -eq 77 -and $fileContent[1] -eq 90)
+}
+ 
+$filesWithMZ | ForEach-Object { Write-Output $_.FullName }
+```
