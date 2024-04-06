@@ -28,3 +28,55 @@ $filesWithMZ = Get-ChildItem -Recurse | Where-Object {
  
 $filesWithMZ | ForEach-Object { Write-Output $_.FullName }
 ```
+## Unzip .zip file recursively
+```
+$sourcePath = "C:\test"
+ 
+ 
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+function Unzip
+{
+  param([string]$zipfile, [string]$outpath)
+  [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+}
+ 
+$flag = $true
+while($flag)
+{
+ $zipFiles = Get-ChildItem -Path $sourcePath -Recurse | Where-Object {$_.Name -like "*.zip"}
+ 
+ if($zipFiles.count -eq 0)
+ {
+    $flag = $false
+ }
+ 
+ elseif($zipFiles.count -gt 0)
+ {
+    foreach($zipFile in $zipFiles)
+    {
+     #create the new name without .zip
+     $newName = $zipFile.FullName.Replace(".zip", "")
+ 
+     Unzip $zipFile.FullName $newName
+ 
+     #remove zip file after unzipping so it doesn't repeat 
+     Remove-Item $zipFile.FullName   
+    }
+ }
+ Clear-Variable zipFiles
+}
+```
+## Zip back all folder
+```
+$sourcePath = "C:\Source"
+$destinationPath = "C:\test"
+ 
+$source = Get-ChildItem -Path $sourcePath -Filter "*" -Directory
+Add-Type -assembly "system.io.compression.filesystem"
+Foreach ($s in $source)
+{
+  $destination = Join-path -path $destinationPath -ChildPath "$($s.name).zip"
+  If(Test-path $destination) {Remove-item $destination}
+  [io.compression.zipfile]::CreateFromDirectory($s.fullname, $destination)
+}
+```
