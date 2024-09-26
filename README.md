@@ -80,3 +80,41 @@ Foreach ($s in $source)
   [io.compression.zipfile]::CreateFromDirectory($s.fullname, $destination)
 }
 ```
+## Unzip .gz file recursively
+```
+# Define the directory to search for .gz files
+$directoryPath = "C:\Path\To\Your\Directory"
+
+# Get all .gz files recursively
+$gzFiles = Get-ChildItem -Path $directoryPath -Filter *.gz -Recurse
+
+# Iterate through each .gz file
+foreach ($gzFile in $gzFiles) {
+    # Define the output file path by removing the .gz extension
+    $outputFilePath = [System.IO.Path]::ChangeExtension($gzFile.FullName, $null)
+
+    # Create a FileStream for the .gz file
+    $fileStream = [System.IO.File]::OpenRead($gzFile.FullName)
+
+    # Create a FileStream for the output file
+    $outputStream = [System.IO.File]::OpenWrite($outputFilePath)
+
+    # Use a GZipStream to decompress the .gz file
+    $gzipStream = New-Object System.IO.Compression.GZipStream($fileStream, [System.IO.Compression.CompressionMode]::Decompress)
+
+    try {
+        # Copy the decompressed data to the output file
+        $gzipStream.CopyTo($outputStream)
+    } finally {
+        # Close streams
+        $gzipStream.Close()
+        $outputStream.Close()
+        $fileStream.Close()
+    }
+
+    # Delete the .gz file after decompression
+    Remove-Item -Path $gzFile.FullName -Force
+
+    Write-Host "Decompressed: $($gzFile.FullName) to $outputFilePath and deleted the .gz file."
+}
+```
