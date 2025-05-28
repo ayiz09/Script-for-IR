@@ -118,3 +118,33 @@ foreach ($gzFile in $gzFiles) {
     Write-Host "Decompressed: $($gzFile.FullName) to $outputFilePath and deleted the .gz file."
 }
 ```
+## Check Drives
+```
+wmic logicaldisk get deviceid, volumename, description
+
+```
+```
+wmic diskdrive get Caption, MediaType, Index, InterfaceType
+
+```
+## PowerShell and POwerShell ISE
+```
+C:\Users\user\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline
+
+c:\users\user\appdata\local\microsoft_corporation\powershell_ise.exe_strongname_lw2v2vm3wmtzzpebq33gybmeoxukb04w\3.0.0.0\autosavefiles\
+
+```
+## Task scheduler
+
+```
+Get-ScheduledTask | Where-Object {$_.TaskName -like '*strings_apa*'} | Format-List *
+
+```
+## Network @ Netstat ?
+```
+Get-NetTCPConnection | Select-Object LocalAddress,LocalPort,RemoteAddress,RemotePort,State,OwningProcess,@{Name='ProcessName';Expression={(Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).Name}}
+```
+### Find File recursive
+```
+Get-PSDrive -PSProvider FileSystem | ForEach-Object { Get-ChildItem -Path $_.Root -Filter "strings_apa" -Recurse -ErrorAction SilentlyContinue }
+```
